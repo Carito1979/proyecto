@@ -9,6 +9,7 @@ La función get_movies_by_category(category) ayuda a encontrar peliculas segun s
 
 # Importamos las herramientas necesarias para continuar nuestra API
 from fastapi import FastAPI, HTTPException # FastAPI nos ayuda a crear la API, HTTPException nos ayuda a mejorar errores
+from fastapi.responses import HTMLResponse, JSONResponse
 
 import pandas as pd # pandas nos ayuda a manejar tablas como si fuera un Excel
 import nltk # nltk es una libreria para procesar texto y analizar palabras
@@ -76,6 +77,13 @@ def chatbot(query: str):
     # Si encontramos las peliculas, enviamos la lista de películas; sino, ostramos un mensaje de que no se encontraron cinsidencias
     
     return JSONResponse (content={
-    "respuesta": "aqui tienes algunas peliculas relacionadas." if results else "no encontre peliculas en esa categoria.",
-    "peliculas": results
+        "respuesta": "Aquí tienes algunas películas relacionadas." if results else "No encontré películas en esa categoría.",
+        "películas": results
     })
+    
+# Ruta para buscar películas por categoría específica
+
+@app.get ('/movies/by_category/', tags=['Movies'])
+def get_movies_by_category(category: str):
+    # Filtramos la lista de películas según la categoría ingresada
+    return [m for m in movies_list if category.lower() in m['category'].lower()]
